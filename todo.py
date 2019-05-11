@@ -1,4 +1,5 @@
 import datetime
+import pytz
 import urllib.request
 from urllib.parse import urlparse
 from icalendar import Calendar, Event
@@ -48,6 +49,7 @@ class Todo:
    def __init__(self, assignments):
       self.assignments = assignments
       self.date = datetime.datetime.now()
+      self.assignments.sort(key=lambda x: x.dueDate)
 
    ####################################################
    # Returns a specific assignment's URL
@@ -63,19 +65,25 @@ class Todo:
       return
 
    def displayTODO(self):
-      weekAssign = self.getWeek(0)
-      self.displayWeek()
-      self.printAssignments()
+      self.displayDay(self.date)
    
    def displayWeek(self):
-      self.displayDay()
+      return
 
-   def displayDay(self):
+   def displayDay(self, date):
+      print (date.strftime("%b %d"))
+      month = date.month
+      day = date.day
+      for i in self.assignments:
+         if i.dueDate.month == month:
+            if i.dueDate.day == day:
+               print (i.name)
+               print ("   ", i.course)
       return
 
    def printAssignments(self):
       for i in self.assignments:
-         print (i.name)
+         print(i.dueDate)
 
 ####################################################
 # CLASS: Assignment
@@ -107,7 +115,7 @@ class Assignment:
       temp = self.courseID
       temp = urlparse(temp).query
       self.courseID = temp[24:29]
-      
+      self.dueDate = self.dueDate.replace(tzinfo = None)
       self.course = self.name[self.name.find("[")+1:self.name.find("]")]
       self.name = self.name[0:self.name.find("[")]
       self.UID = self.UID.replace('event-assignment-', '')
