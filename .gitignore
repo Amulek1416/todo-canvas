@@ -1,3 +1,5 @@
 keys.txt
-cal.ics
+resources/cal.ics
 __pycache__/
+resources/todo.json
+resources/settings.json
